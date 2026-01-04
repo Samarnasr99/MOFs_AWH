@@ -2,14 +2,16 @@
 import streamlit as st
 from mof_matcher import load_mof_data, find_matching_mofs, INPUT_COLS
 
+# IMPORTANT: this should be the first Streamlit command
+st.set_page_config(page_title="MOF Adsorption Tool", layout="wide")
+
+
 @st.cache_data
 def get_data():
     return load_mof_data()
 
 
 def main():
-    st.set_page_config(page_title="MOF Adsorption Tool", layout="wide")
-
     st.title("MOF Adsorption Matching Tool")
     st.write(
         """
@@ -32,12 +34,12 @@ def main():
 
         for i in range(0, len(INPUT_COLS), cols_per_row):
             row_cols = st.columns(cols_per_row)
-            for col_st, field_name in zip(row_cols, INPUT_COLS[i:i + cols_per_row]):
+            for col_st, field_name in zip(row_cols, INPUT_COLS[i : i + cols_per_row]):
                 with col_st:
                     user_val = st.text_input(
                         field_name,
                         value="",
-                        key=f"input_{field_name}"
+                        key=f"input_{field_name}",
                     )
                     input_values[field_name] = user_val
 
