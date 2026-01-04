@@ -1,3 +1,25 @@
+import os
+import requests
+import pandas as pd
+
+DATA_URL = "https://github.com/Samarnasr99/MOFs_AWH/releases/download/v1.0.0/MOFs_UI_Tool1.xlsm"
+LOCAL_XLSM = "MOFs_UI_Tool1.xlsm"
+
+def _ensure_local_file() -> None:
+    if os.path.exists(LOCAL_XLSM):
+        return
+    resp = requests.get(DATA_URL)
+    resp.raise_for_status()
+    with open(LOCAL_XLSM, "wb") as f:
+        f.write(resp.content)
+
+def load_mof_data() -> pd.DataFrame:
+    _ensure_local_file()
+    df = pd.read_excel(LOCAL_XLSM, sheet_name="Sheet2", engine="openpyxl")
+    df.columns = df.columns.str.strip()
+    return df
+
+
 # mof_matcher.py
 import pandas as pd
 from typing import Dict, Any, List
