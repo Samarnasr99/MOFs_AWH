@@ -4,8 +4,7 @@ from mof_matcher import load_mof_data, find_matching_mofs, INPUT_COLS
 
 @st.cache_data
 def get_data():
-    # Cached so Excel is only read once per session
-    return load_mof_data("MOFs_UI_Tool1.xlsm")
+    return load_mof_data()
 
 
 def main():
