@@ -1,11 +1,12 @@
-import os
+# mof_matcher.py
+
 import requests
 import pandas as pd
+from io import BytesIO
 from typing import Dict, Any, List
 
-# URL of your release asset (this is correct for your repo)
+# Direct URL to your release asset (this is correct)
 DATA_URL = "https://github.com/Samarnasr99/MOFs_AWH/releases/download/v1.0.0/MOFs_UI_Tool1.xlsm"
-LOCAL_XLSM = "MOFs_UI_Tool1.xlsm"
 
 INPUT_COLS: List[str] = [
     "MOF", "N2", "CO2", "CH4", "Gas Temperature (°C)", "Gas Pressure (bar)",
@@ -23,18 +24,16 @@ OUTPUT_COLS: List[str] = [
 ]
 
 
-def load_mof_data(excel_path: str = LOCAL_XLSM) -> pd.DataFrame:
+def load_mof_data() -> pd.DataFrame:
     """
-    Ensure the Excel file is available locally (download from GitHub release if needed),
-    then load Sheet2 into a DataFrame.
+    Download the Excel file from GitHub release and load Sheet2 into a DataFrame.
+    No local file is required, so no FileNotFoundError from the filesystem.
     """
-    if not os.path.exists(excel_path):
-        resp = requests.get(DATA_URL)
-        resp.raise_for_status()  # will raise if the URL is wrong or inaccessible
-        with open(excel_path, "wb") as f:
-            f.write(resp.content)
+    resp = requests.get(DATA_URL)
+    resp.raise_for_status()
 
-    df = pd.read_excel(excel_path, sheet_name="Sheet2", engine="openpyxl")
+    excel_bytes = BytesIO(resp.content)
+    df = pd.read_excel(excel_bytes, sheet_name="Sheet2", engine="openpyxl")
     df.columns = df.columns.str.strip()
     return df
 
